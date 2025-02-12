@@ -1,40 +1,27 @@
-# Worker + D1 Database
-
-![Worker + D1 Template Preview](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/cb7cb0a9-6102-4822-633c-b76b7bb25900/public)
+# Worker + PostgreSQL using Hyperdrive
 
 <!-- dash-content-start -->
 
-D1 is Cloudflare's native serverless SQL database ([docs](https://developers.cloudflare.com/d1/)). This project demonstrates using a Worker with a D1 binding to execute a SQL statement. A simple frontend displays the result of this query:
+[Hyperdrive](https://developers.cloudflare.com/hyperdrive/) makes connecting to your regional database from Cloudflare Workers fast. This project demonstrates a Worker connecting to a PostgreSQL database using Hyperdrive.
+
+Upon loading your Worker, your will see the list of PostgreSQL tables in your database, as obtained with the following query:
 
 ```SQL
-SELECT * FROM comments LIMIT 3;
-```
-
-The D1 database is initialized with a `comments` table and this data:
-
-```SQL
-INSERT INTO comments (author, content)
-VALUES
-    ('Kristian', 'Congrats!'),
-    ('Serena', 'Great job!'),
-    ('Max', 'Keep up the good work!')
-;
+SELECT * FROM pg_tables LIMIT 10;
 ```
 
 > [!IMPORTANT]
 > When using C3 to create this project, select "no" when it asks if you want to deploy. You need to follow this project's [setup steps](https://github.com/cloudflare/templates/tree/main/d1-template#setup-steps) before deploying.
-
-<!-- dash-content-end -->
 
 ## Getting Started
 
 Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
 
 ```
-npm create cloudflare@latest -- --template=cloudflare/templates/d1-template
+npm create cloudflare@latest -- --template=cloudflare/templates/postgres-hyperdrive-template
 ```
 
-A live public deployment of this template is available at [https://d1-template.templates.workers.dev](https://d1-template.templates.workers.dev)
+A live public deployment of this template is available at [https://postgres-hyperdrive-template.templates.workers.dev](https://postgres-hyperdrive-template.templates.workers.dev)
 
 ## Setup Steps
 
@@ -42,16 +29,12 @@ A live public deployment of this template is available at [https://d1-template.t
    ```bash
    npm install
    ```
-2. Create a [D1 database](https://developers.cloudflare.com/d1/get-started/) with the name "d1-template-database":
+2. Create a [Hyperdrive configuration](https://developers.cloudflare.com/hyperdrive/get-started/) with the name "hyperdrive-configuration":
    ```bash
-   npx wrangler d1 create d1-template-database
+   npx wrangler hyperdrive create hyperdrive-configuration --connection-string="postgres://<DB_USER>:<DB_PASSWORD>@<DB_HOSTNAME_OR_IP_ADDRESS>:5432/<DATABASE_NAME>"
    ```
-   ...and update the `database_id` field in `wrangler.json` with the new database ID.
-3. Run the following db migration to initialize the database (notice the `migrations` directory in this project):
-   ```bash
-   npx wrangler d1 migrations apply --remote d1-template-database
-   ```
-4. Deploy the project!
+   ...and update the `hyperdrive` `id` field in `wrangler.json` with the new Hyperdrive ID. You can also specify a connection string for a local PostgreSQL database used for development using the `hyperdrive` `localConnectionString` field.
+3. Deploy the project!
    ```bash
    npx wrangler deploy
    ```

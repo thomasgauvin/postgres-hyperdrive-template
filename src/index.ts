@@ -9,7 +9,7 @@ export default {
 		const sql = postgres(env.HYPERDRIVE.connectionString);
 
 		try{
-			const result = await sql`select * from pg_tables LIMIT 10`;
+			const result = await sql`SELECT * FROM pg_tables LIMIT 10`;
 
 			ctx.waitUntil(sql.end());
 
